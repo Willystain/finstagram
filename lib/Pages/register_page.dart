@@ -59,7 +59,9 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Future _getPicture() async {
     FilePicker.platform.pickFiles(type: FileType.image).then((result) {
-      setState(() {});
+      setState(() {
+        _image = File(result!.files.first.path!);
+      });
     });
   }
 
@@ -70,6 +72,7 @@ class _RegisterPageState extends State<RegisterPage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            _nameField(),
             const SizedBox(
               height: 20,
             ),
@@ -86,6 +89,17 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
       ),
     );
+  }
+
+  Widget _nameField() {
+    return TextFormField(
+        decoration: const InputDecoration(hintText: "Nome"),
+        onSaved: (_value) {
+          setState(() {
+            _name = _value;
+          });
+        },
+        validator: (_value) => _value!.length > 0 ? null : "enter a name");
   }
 
   Widget _emailField() {
