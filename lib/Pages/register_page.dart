@@ -110,7 +110,8 @@ class _RegisterPageState extends State<RegisterPage> {
             _email = _value;
           });
         },
-        validator: (_value) => _value!.length > 0 ? null : "enter a name");
+        validator: (_value) =>
+            _value!.length > 0 ? null : "enter a valid e-mail");
   }
 
   Widget _passwordField() {
@@ -122,7 +123,8 @@ class _RegisterPageState extends State<RegisterPage> {
             _password = _value;
           });
         },
-        validator: (_value) => _value!.length > 0 ? null : "enter a name");
+        validator: (_value) =>
+            _value!.length > 6 ? null : "password must be greater then 6");
   }
 
   Widget _botao() {
@@ -131,8 +133,8 @@ class _RegisterPageState extends State<RegisterPage> {
         Expanded(
           child: MaterialButton(
             height: 45,
-            onPressed: function,
-            child: const Text('SING UP'),
+            onPressed: registerUser,
+            child: Text('SING UP'),
             color: Colors.amber,
           ),
         ),
@@ -140,8 +142,10 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  void function() {
-    print('chamou');
-    if (_formKey.currentState!.validate()) {}
+  void registerUser() {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      print('formulario valido');
+    }
   }
 }

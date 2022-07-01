@@ -1,3 +1,4 @@
+import 'package:finstagram/Pages/home_page.dart';
 import 'package:finstagram/Pages/login_page.dart';
 import 'package:finstagram/Pages/register_page.dart';
 import 'package:flutter/material.dart';
@@ -16,10 +17,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: 'login',
+      initialRoute: 'homepage',
       routes: {
         'register': (context) => const RegisterPage(),
         'login': (context) => const LoginPage(),
+        'homepage': (context) => const HomePage(),
       },
       home: const Scaffold(),
     );
