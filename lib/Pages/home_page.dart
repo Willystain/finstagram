@@ -1,3 +1,5 @@
+import 'package:finstagram/Pages/feed_page.dart';
+import 'package:finstagram/Pages/profile_page.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -10,14 +12,8 @@ class HomePage extends StatefulWidget {
 int _selectedIndex = 0;
 
 const List<Widget> _pages = <Widget>[
-  Icon(
-    Icons.call,
-    size: 150,
-  ),
-  Icon(
-    Icons.camera,
-    size: 150,
-  ),
+  FeedPage(),
+  ProfilePage(),
 ];
 
 class _HomePageState extends State<HomePage> {
@@ -43,12 +39,13 @@ class _HomePageState extends State<HomePage> {
             label: 'Feed',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.verified_user),
-            label: 'User',
+            icon: Icon(Icons.person),
+            label: 'Profile',
           ),
         ],
         currentIndex: _selectedIndex,
         onTap: (_value) {
+          print(_value);
           setState(() {
             _selectedIndex = _value;
           });
