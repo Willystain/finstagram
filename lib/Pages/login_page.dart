@@ -1,3 +1,5 @@
+import 'package:finstagram/Services/firebase_services.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -112,8 +114,12 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void loginFunction() {
-    print(_formKey.currentState!.validate());
-    if (_formKey.currentState!.validate()) {}
-    ;
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      FirebaseService().loginUser(email: emailValue!, password: passwordValue!);
+      Navigator.pushNamed(context, 'homepage');
+    } else {
+      print('formulario invalido');
+    }
   }
 }
