@@ -1,6 +1,10 @@
 import 'dart:io';
+
+import 'package:finstagram/Services/firebase_services.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -18,6 +22,7 @@ final _formKey = GlobalKey<FormState>();
 class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
+    var firebaseProvider = Provider.of<FirebaseService>(context);
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -32,7 +37,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   style: TextStyle(fontSize: 50, fontWeight: FontWeight.w500),
                 ),
                 _profileImage(),
-                _registerForm(),
+                _registerForm(context: context),
               ],
             ),
           ),
@@ -65,7 +70,7 @@ class _RegisterPageState extends State<RegisterPage> {
     });
   }
 
-  Widget _registerForm() {
+  Widget _registerForm({required BuildContext context}) {
     return Form(
       key: _formKey,
       child: Padding(
@@ -84,7 +89,7 @@ class _RegisterPageState extends State<RegisterPage> {
             const SizedBox(
               height: 40,
             ),
-            _botao()
+            _botao(context: context)
           ],
         ),
       ),
@@ -127,25 +132,29 @@ class _RegisterPageState extends State<RegisterPage> {
             _value!.length > 6 ? null : "password must be greater then 6");
   }
 
-  Widget _botao() {
+  Widget _botao({required BuildContext context}) {
+    var firebaseProvider = Provider.of<FirebaseService>(context);
     return Row(
       children: [
         Expanded(
           child: MaterialButton(
             height: 45,
-            onPressed: registerUser,
+            onPressed: () async {
+              if (_formKey.currentState!.validate() && _image != null) {
+                _formKey.currentState!.save();
+                firebaseProvider.registerUser(
+                    email: _email!,
+                    password: _password!,
+                    name: _name!,
+                    image: _image!);
+                print('chamou');
+              }
+            },
             child: Text('SING UP'),
             color: Colors.amber,
           ),
         ),
       ],
     );
-  }
-
-  void registerUser() {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-      print('formulario valido');
-    }
   }
 }

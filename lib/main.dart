@@ -1,13 +1,27 @@
 import 'package:finstagram/Pages/home_page.dart';
 import 'package:finstagram/Pages/login_page.dart';
 import 'package:finstagram/Pages/register_page.dart';
+import 'package:finstagram/Services/firebase_services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
+  Provider.debugCheckInvalidValueType = null;
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(const MyApp());
+
+  runApp(
+    MultiProvider(
+      providers: [
+        Provider<FirebaseService>(
+          create: (context) => FirebaseService(),
+        )
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -22,9 +36,9 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: 'login',
       routes: {
-        'register': (context) => const RegisterPage(),
-        'login': (context) => const LoginPage(),
-        'homepage': (context) => const HomePage(),
+        'register': (context) => RegisterPage(),
+        'login': (context) => LoginPage(),
+        'homepage': (context) => HomePage(),
       },
       home: const Scaffold(),
     );

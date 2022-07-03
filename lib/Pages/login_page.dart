@@ -1,6 +1,8 @@
 import 'package:finstagram/Services/firebase_services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -16,6 +18,7 @@ String? passwordValue;
 class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
+    final firebaseProvider = Provider.of<FirebaseService>(context);
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -32,11 +35,24 @@ class _LoginPageState extends State<LoginPage> {
                   height: 30,
                 ),
                 _form(),
-                _loginButton(),
+                MaterialButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      _formKey.currentState!.save();
+                      firebaseProvider.loginUser(
+                          email: emailValue!, password: passwordValue!);
+
+                      Navigator.pushNamed(context, 'homepage');
+                    } else {
+                      print('formulario invalido');
+                    }
+                  },
+                  child: Text('Login'),
+                ),
                 const SizedBox(
                   height: 20,
                 ),
-                _registerLink(),
+                _registerLink(context: context),
               ],
             ),
           ),
@@ -95,14 +111,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _loginButton() {
-    return MaterialButton(
-      onPressed: loginFunction,
-      child: Text('Login'),
-    );
-  }
-
-  Widget _registerLink() {
+  Widget _registerLink({required BuildContext context}) {
     return GestureDetector(
       onTap: () => Navigator.pushNamed(context, 'register'),
       child: const Text(
@@ -111,15 +120,5 @@ class _LoginPageState extends State<LoginPage> {
             fontSize: 15, color: Colors.blue, fontWeight: FontWeight.w400),
       ),
     );
-  }
-
-  void loginFunction() {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-      FirebaseService().loginUser(email: emailValue!, password: passwordValue!);
-      Navigator.pushNamed(context, 'homepage');
-    } else {
-      print('formulario invalido');
-    }
   }
 }
