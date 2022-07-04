@@ -15,13 +15,16 @@ class FirebaseService with ChangeNotifier {
   Map? currentuser;
 
   Future<bool> loginUser(
-      {required String email, required String password}) async {
+      {required String email,
+      required String password,
+      required BuildContext context}) async {
     UserCredential _userCredential = await _auth.signInWithEmailAndPassword(
         email: email, password: password);
-
     try {
       if (_userCredential.user != null) {
         currentuser = await getUserData(uid: _userCredential.user!.uid);
+        print(currentuser);
+        Navigator.pushNamed(context, 'homepage');
         notifyListeners();
         return true;
       }

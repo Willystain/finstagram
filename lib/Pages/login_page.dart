@@ -18,7 +18,7 @@ String? passwordValue;
 class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
-    final firebaseProvider = Provider.of<FirebaseService>(context);
+    var firebaseProvider = Provider.of<FirebaseService>(context);
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -40,9 +40,9 @@ class _LoginPageState extends State<LoginPage> {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
                       firebaseProvider.loginUser(
-                          email: emailValue!, password: passwordValue!);
-
-                      Navigator.pushNamed(context, 'homepage');
+                          email: emailValue!,
+                          password: passwordValue!,
+                          context: context);
                     } else {
                       print('formulario invalido');
                     }

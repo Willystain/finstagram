@@ -147,7 +147,6 @@ class _RegisterPageState extends State<RegisterPage> {
                     password: _password!,
                     name: _name!,
                     image: _image!);
-                print('chamou');
               }
             },
             child: Text('SING UP'),
