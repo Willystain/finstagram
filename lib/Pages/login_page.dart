@@ -11,7 +11,7 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
-final _formKey = GlobalKey<FormState>();
+final _formKeyLogin = GlobalKey<FormState>();
 String? emailValue;
 String? passwordValue;
 
@@ -37,8 +37,8 @@ class _LoginPageState extends State<LoginPage> {
                 _form(),
                 MaterialButton(
                   onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      _formKey.currentState!.save();
+                    if (_formKeyLogin.currentState!.validate()) {
+                      _formKeyLogin.currentState!.save();
                       firebaseProvider.loginUser(
                           email: emailValue!,
                           password: passwordValue!,
@@ -67,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget _form() {
     // Build a Form widget using the _formKey created above.
     return Form(
-      key: _formKey,
+      key: _formKeyLogin,
       child: Column(
         children: <Widget>[
           _emailField(),

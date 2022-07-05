@@ -1,5 +1,6 @@
 import 'package:finstagram/Pages/home_page.dart';
 import 'package:finstagram/Pages/login_page.dart';
+import 'package:finstagram/Pages/newPost_page.dart';
 import 'package:finstagram/Pages/register_page.dart';
 import 'package:finstagram/Services/firebase_services.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
         'register': (context) => RegisterPage(),
         'login': (context) => LoginPage(),
         'homepage': (context) => HomePage(),
+        'newPostpage': (context) => NewPostPage(),
       },
       home: const Scaffold(),
     );

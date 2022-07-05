@@ -23,7 +23,6 @@ class FirebaseService with ChangeNotifier {
     try {
       if (_userCredential.user != null) {
         currentuser = await getUserData(uid: _userCredential.user!.uid);
-        print(currentuser);
         Navigator.pushNamed(context, 'homepage');
         notifyListeners();
         return true;
@@ -73,5 +72,21 @@ class FirebaseService with ChangeNotifier {
   Future<Map> getUserData({required String uid}) async {
     DocumentSnapshot _doc = await _db.collection(userCollection).doc(uid).get();
     return _doc.data() as Map;
+  }
+
+  void createPost(
+      {required String postText,
+      required String userName,
+      required String profilePic}) async {
+    await _db.collection('posts').add({
+      'userId': _auth.currentUser!.uid,
+      'postText': postText,
+      'userName': userName,
+      'pofPic': profilePic,
+    });
+  }
+
+  Stream<QuerySnapshot> getLatestPost() {
+    return _db.collection('posts').snapshots();
   }
 }

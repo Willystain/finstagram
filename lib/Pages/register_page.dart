@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:finstagram/Services/firebase_services.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -147,6 +146,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     password: _password!,
                     name: _name!,
                     image: _image!);
+                Navigator.pop(context);
               }
             },
             child: Text('SING UP'),

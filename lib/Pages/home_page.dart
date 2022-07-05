@@ -28,7 +28,10 @@ class _HomePageState extends State<HomePage> {
           Padding(
             padding: const EdgeInsets.only(right: 8.0),
             child: IconButton(
-                onPressed: () {}, icon: const Icon(Icons.add_a_photo)),
+                onPressed: () {
+                  Navigator.pushNamed(context, 'newPostpage');
+                },
+                icon: const Icon(Icons.add_a_photo)),
           ),
         ],
       ),
