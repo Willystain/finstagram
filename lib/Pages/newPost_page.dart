@@ -1,10 +1,13 @@
 import 'dart:io';
-
+import 'package:uuid/uuid.dart';
+import 'package:uuid/uuid_util.dart';
 import 'package:finstagram/Services/firebase_services.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
+
+import '../models/personmodel.dart';
 
 class NewPostPage extends StatefulWidget {
   const NewPostPage({Key? key}) : super(key: key);
@@ -13,14 +16,15 @@ class NewPostPage extends StatefulWidget {
   State<NewPostPage> createState() => _NewPostPageState();
 }
 
+File? _image;
 String? _name;
+User? _user;
 
 final _formKey = GlobalKey<FormState>();
 
 class _NewPostPageState extends State<NewPostPage> {
   @override
   Widget build(BuildContext context) {
-    var firebaseProvider = Provider.of<FirebaseService>(context);
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -34,6 +38,7 @@ class _NewPostPageState extends State<NewPostPage> {
                   'Create Post',
                   style: TextStyle(fontSize: 50, fontWeight: FontWeight.w500),
                 ),
+                _postImage(),
                 _registerForm(context: context),
               ],
             ),
@@ -44,6 +49,34 @@ class _NewPostPageState extends State<NewPostPage> {
   }
 
 //WIDGETS -----------------------------------------------------
+
+  Widget _postImage() {
+    var _imageProvider = _image != null
+        ? FileImage(_image!)
+        : Image.network('https://i.pravatar.cc/300').image;
+    return GestureDetector(
+      onTap: _getPicture,
+      child: AspectRatio(
+        aspectRatio: 487 / 451,
+        child: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              fit: BoxFit.cover,
+              image: NetworkImage('https://i.pravatar.cc/300'),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future _getPicture() async {
+    FilePicker.platform.pickFiles(type: FileType.image).then((result) {
+      setState(() {
+        _image = File(result!.files.first.path!);
+      });
+    });
+  }
 
   Widget _registerForm({required BuildContext context}) {
     return Form(
@@ -82,12 +115,19 @@ class _NewPostPageState extends State<NewPostPage> {
           child: MaterialButton(
             height: 45,
             onPressed: () async {
+              _user = await firebaseProvider.getUserDetails();
+
               if (_formKey.currentState!.validate()) {
+                var v4 = Uuid().v4();
                 _formKey.currentState!.save();
-                firebaseProvider.createPost(
-                    postText: _name!,
-                    userName: firebaseProvider.currentuser!['name'],
-                    profilePic: firebaseProvider.currentuser!['image']);
+                FirebaseService().createPost(
+                  postText: _name!,
+                  userName: _user!.name,
+                  profilePic: _user!.photoUrl,
+                  postFile: _user!.photoUrl,
+                  postId: v4,
+                );
+
                 Navigator.pop(context);
               }
             },

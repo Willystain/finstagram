@@ -18,7 +18,6 @@ String? passwordValue;
 class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
-    var firebaseProvider = Provider.of<FirebaseService>(context);
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -39,7 +38,7 @@ class _LoginPageState extends State<LoginPage> {
                   onPressed: () {
                     if (_formKeyLogin.currentState!.validate()) {
                       _formKeyLogin.currentState!.save();
-                      firebaseProvider.loginUser(
+                      FirebaseService().loginUser(
                           email: emailValue!,
                           password: passwordValue!,
                           context: context);

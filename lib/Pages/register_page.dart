@@ -122,17 +122,16 @@ class _RegisterPageState extends State<RegisterPage> {
     return TextFormField(
         obscureText: true,
         decoration: const InputDecoration(hintText: "Passowrd..."),
-        onSaved: (_value) {
+        onSaved: (value) {
           setState(() {
-            _password = _value;
+            _password = value;
           });
         },
-        validator: (_value) =>
-            _value!.length > 6 ? null : "password must be greater then 6");
+        validator: (value) =>
+            value!.length > 6 ? null : "password must be greater then 6");
   }
 
   Widget _botao({required BuildContext context}) {
-    var firebaseProvider = Provider.of<FirebaseService>(context);
     return Row(
       children: [
         Expanded(
@@ -141,7 +140,7 @@ class _RegisterPageState extends State<RegisterPage> {
             onPressed: () async {
               if (_formKey.currentState!.validate() && _image != null) {
                 _formKey.currentState!.save();
-                firebaseProvider.registerUser(
+                FirebaseService().registerUser(
                     email: _email!,
                     password: _password!,
                     name: _name!,
@@ -149,8 +148,8 @@ class _RegisterPageState extends State<RegisterPage> {
                 Navigator.pop(context);
               }
             },
-            child: Text('SING UP'),
             color: Colors.amber,
+            child: const Text('SING UP'),
           ),
         ),
       ],
