@@ -5,17 +5,25 @@ class Post {
   String postText = '';
   String username = '';
 
-  Post();
+  Post({required this.postId, required this.postText, required this.username});
 
   Post.fromMap(Map<String, dynamic> data) {
     postId = data['postId'];
     postText = data['postText'];
   }
-
-  Map<String, dynamic> toMap() {
-    return {
-      'postId': postId,
-      'postText': postText,
-    };
+//RECEBE O SNAPSHOT E RETORNA ELE EM UM OBJETO DO TIPO POST
+  static Post fromSnap(DocumentSnapshot snap) {
+    var snapshot = snap.data() as Map<String, dynamic>;
+    return Post(
+      postId: snapshot["postID"],
+      postText: snapshot["postText"],
+      username: snapshot["userName"],
+    );
   }
+
+  Map<String, dynamic> toJson() => {
+        'postId': postId,
+        'postText': postText,
+        'username': username,
+      };
 }

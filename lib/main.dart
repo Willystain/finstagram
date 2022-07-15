@@ -1,6 +1,7 @@
 import 'package:finstagram/Pages/home_page.dart';
 import 'package:finstagram/Pages/login_page.dart';
 import 'package:finstagram/Pages/newPost_page.dart';
+import 'package:finstagram/Pages/postDetail.dart';
 import 'package:finstagram/Pages/register_page.dart';
 import 'package:finstagram/Services/firebase_services.dart';
 import 'package:finstagram/Services/postNotifier.dart';

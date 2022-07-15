@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:finstagram/Pages/postDetail.dart';
 import 'package:finstagram/Services/firebase_services.dart';
 import 'package:finstagram/Services/postNotifier.dart';
 import 'package:finstagram/Widgets/deletePost.dart';
@@ -40,26 +41,38 @@ class _FeedPageState extends State<FeedPage> {
 
   Widget _postListView(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-        stream: FirebaseService().getLatestPost(),
-        builder:
-            (BuildContext context, AsyncSnapshot<QuerySnapshot> _snapshot) {
-          if (_snapshot.hasData) {
-            List _post = _snapshot.data!.docs.map((e) => e.data()).toList();
+      stream: FirebaseService().getLatestPost(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> _snapshot) {
+        if (_snapshot.hasData) {
+          List _post = _snapshot.data!.docs.map((e) => e.data()).toList();
 
-            return ListView.builder(
-              itemCount: _post.length,
-              itemBuilder: (BuildContext context, int index) {
-                Map post = _post[index];
+          return ListView.builder(
+            itemCount: _post.length,
+            itemBuilder: (BuildContext context, int index) {
+              Map post = _post[index];
+              var postId = _snapshot.data!.docs[index].id;
+              Post novoPost = Post(
+                  postId: postId,
+                  postText: _post[index]['postText'],
+                  username: _post[index]['userName']);
 
-                var postId = _snapshot.data!.docs[index].id;
-
-                return Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Card(
-                        child: Column(
-                          children: [
-                            ListTile(
+              return Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Card(
+                      child: Column(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PostDetail(
+                                      newPost: novoPost,
+                                    ),
+                                  ));
+                            },
+                            child: ListTile(
                               leading: CircleAvatar(
                                 backgroundImage:
                                     NetworkImage(_post[index]['pofPic']),
@@ -69,40 +82,42 @@ class _FeedPageState extends State<FeedPage> {
                                       fontWeight: FontWeight.w400,
                                       fontSize: 18)),
                               subtitle: Text(
-                                _post[index]['postText'],
+                                novoPost.postText,
                               ),
                             ),
-                            Row(
-                              children: [
-                                Container(
-                                  height: 150,
-                                  width: 150,
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      image: NetworkImage(
-                                          _post[index]['postFile']),
-                                      fit: BoxFit.fill,
-                                    ),
+                          ),
+                          Row(
+                            children: [
+                              Container(
+                                height: 150,
+                                width: 150,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image:
+                                        NetworkImage(_post[index]['postFile']),
+                                    fit: BoxFit.fill,
                                   ),
                                 ),
-                                IconButton(
-                                  onPressed: () {
-                                    print(postId);
-                                    FirebaseService().deletePost(postId);
-                                  },
-                                  icon: const Icon(Icons.delete),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  print(postId);
+                                  FirebaseService().deletePost(postId);
+                                },
+                                icon: const Icon(Icons.delete),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                    ]);
-              },
-            );
-          } else {
-            return CircularProgressIndicator();
-          }
-        });
+                    ),
+                  ]);
+            },
+          );
+        } else {
+          return CircularProgressIndicator();
+        }
+      },
+    );
   }
 }

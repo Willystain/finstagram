@@ -112,13 +112,6 @@ class FirebaseService with ChangeNotifier {
     return _db.collection('posts').snapshots();
   }
 
-  Stream<Post> getPostStream() async* {
-    DocumentReference<Map<String, dynamic>> newPostStream =
-        _db.collection('posts').doc();
-    print(newPostStream);
-    print('aaa');
-  }
-
   Future<void> deletePost(String postId) async {
     _db
         .collection('posts')

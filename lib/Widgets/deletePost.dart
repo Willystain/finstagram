@@ -16,9 +16,7 @@ class _DeletePostState extends State<DeletePost> {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      onPressed: () {
-        FirebaseService().getPostStream();
-      },
+      onPressed: () {},
       icon: const Icon(Icons.delete),
     );
   }
