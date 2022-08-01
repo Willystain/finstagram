@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:finstagram/Pages/feed2_filtered.dart';
+import 'package:finstagram/Pages/feed2_page.dart';
 import 'package:finstagram/Pages/postDetail.dart';
 import 'package:finstagram/Services/firebase_services.dart';
-import 'package:finstagram/Services/postNotifier.dart';
-import 'package:finstagram/Widgets/deletePost.dart';
 import 'package:finstagram/Widgets/postsCount.dart';
 import 'package:finstagram/models/post.dart';
 import 'package:flutter/material.dart';
@@ -16,108 +16,27 @@ class FeedPage extends StatefulWidget {
   State<FeedPage> createState() => _FeedPageState();
 }
 
-List count = [];
-
 class _FeedPageState extends State<FeedPage> {
+  var checks;
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<QuerySnapshot?>.value(
-      value: FirebaseService().posts,
-      initialData: null,
-      child: Column(
-        children: [
-          const Card(
-            child: PostCount(),
+    return (Column(
+      children: [
+        Checkbox(
+            value: false,
+            onChanged: (value) {
+              checks = value;
+            }),
+        Expanded(
+          child: Container(
+            child: _postListView(context),
           ),
-          Expanded(
-            child: Container(
-              child: _postListView(context),
-            ),
-          ),
-        ],
-      ),
-    );
+        ),
+      ],
+    ));
   }
 
   Widget _postListView(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseService().getLatestPost(),
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> _snapshot) {
-        if (_snapshot.hasData) {
-          List _post = _snapshot.data!.docs.map((e) => e.data()).toList();
-
-          return ListView.builder(
-            itemCount: _post.length,
-            itemBuilder: (BuildContext context, int index) {
-              Map post = _post[index];
-              var postId = _snapshot.data!.docs[index].id;
-              Post novoPost = Post(
-                  postId: postId,
-                  postText: _post[index]['postText'],
-                  username: _post[index]['userName']);
-
-              return Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Card(
-                      child: Column(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => PostDetail(
-                                      newPost: novoPost,
-                                    ),
-                                  ));
-                            },
-                            child: ListTile(
-                              leading: CircleAvatar(
-                                backgroundImage:
-                                    NetworkImage(_post[index]['pofPic']),
-                              ),
-                              title: Text(_post[index]['userName'],
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 18)),
-                              subtitle: Text(
-                                novoPost.postText,
-                              ),
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              Container(
-                                height: 150,
-                                width: 150,
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image:
-                                        NetworkImage(_post[index]['postFile']),
-                                    fit: BoxFit.fill,
-                                  ),
-                                ),
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  print(postId);
-                                  FirebaseService().deletePost(postId);
-                                },
-                                icon: const Icon(Icons.delete),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ]);
-            },
-          );
-        } else {
-          return CircularProgressIndicator();
-        }
-      },
-    );
+    return PostFilter(check: checks);
   }
 }

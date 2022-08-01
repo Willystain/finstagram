@@ -36,12 +36,18 @@ class _ProfilePageState extends State<ProfilePage> {
                 postId: snapshot.data!.docs[i]['postId'],
                 postText: snapshot.data!.docs[i]['postText'],
                 username: snapshot.data!.docs[i]['userName'],
+                docRef: snapshot.data!.docs[i]['docs']
               );
-
               return Column(
                 children: [
                   ListTile(
                     leading: Text(novoPost.username),
+                    trailing: IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () {
+                        FirebaseService().deletePost(novoPost.postId);
+                      },
+                    ),
                   )
                 ],
               );

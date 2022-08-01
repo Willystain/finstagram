@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:finstagram/Pages/feed2_page.dart';
 import 'package:uuid/uuid.dart';
 import 'package:uuid/uuid_util.dart';
 import 'package:finstagram/Services/firebase_services.dart';
@@ -6,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
-
 import '../models/personmodel.dart';
 
 class NewPostPage extends StatefulWidget {
@@ -16,7 +16,6 @@ class NewPostPage extends StatefulWidget {
   State<NewPostPage> createState() => _NewPostPageState();
 }
 
-File? _image;
 String? _name;
 User? _user;
 
@@ -38,7 +37,7 @@ class _NewPostPageState extends State<NewPostPage> {
                   'Create Post',
                   style: TextStyle(fontSize: 50, fontWeight: FontWeight.w500),
                 ),
-                _postImage(),
+                // _postImage(),
                 _registerForm(context: context),
               ],
             ),
@@ -50,33 +49,33 @@ class _NewPostPageState extends State<NewPostPage> {
 
 //WIDGETS -----------------------------------------------------
 
-  Widget _postImage() {
-    var _imageProvider = _image != null
-        ? FileImage(_image!)
-        : Image.network('https://i.pravatar.cc/300').image;
-    return GestureDetector(
-      onTap: _getPicture,
-      child: AspectRatio(
-        aspectRatio: 487 / 451,
-        child: Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              fit: BoxFit.cover,
-              image: NetworkImage('https://i.pravatar.cc/300'),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  // Widget _postImage() {
+  //   var _imageProvider = _image != null
+  //       ? FileImage(_image!)
+  //       : Image.network('https://i.pravatar.cc/300').image;
+  //   return GestureDetector(
+  //     onTap: _getPicture,
+  //     child: AspectRatio(
+  //       aspectRatio: 487 / 451,
+  //       child: Container(
+  //         decoration: BoxDecoration(
+  //           image: DecorationImage(
+  //             fit: BoxFit.cover,
+  //             image: NetworkImage('https://i.pravatar.cc/300'),
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
-  Future _getPicture() async {
-    FilePicker.platform.pickFiles(type: FileType.image).then((result) {
-      setState(() {
-        _image = File(result!.files.first.path!);
-      });
-    });
-  }
+  // Future _getPicture() async {
+  //   FilePicker.platform.pickFiles(type: FileType.image).then((result) {
+  //     setState(() {
+
+  //     });
+  //   });
+  // }
 
   Widget _registerForm({required BuildContext context}) {
     return Form(
@@ -120,15 +119,20 @@ class _NewPostPageState extends State<NewPostPage> {
               if (_formKey.currentState!.validate()) {
                 var v4 = Uuid().v4();
                 _formKey.currentState!.save();
-                FirebaseService().createPost(
-                  postText: _name!,
-                  userName: _user!.name,
-                  profilePic: _user!.photoUrl,
-                  postFile: _user!.photoUrl,
-                  postId: v4,
-                );
 
+                FirebaseService().createPost3(map: {
+                  "postText": _name!,
+                  "userName": _user!.name,
+                  "postId": v4,
+                  "userId": _user!.uid,
+                  "check": false,
+                }, postId: v4);
+
+                setState(() {
+                  PostScreen2();
+                });
                 Navigator.pop(context);
+                Navigator.pushNamed(context, 'homepage');
               }
             },
             child: Text('Post'),

@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:finstagram/Services/postNotifier.dart';
+
 import 'package:finstagram/models/personmodel.dart' as model;
 import 'package:finstagram/models/post.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,19 +11,16 @@ import 'package:path/path.dart' as p;
 class FirebaseService with ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final FirebaseFirestore db = FirebaseFirestore.instance;
 
   final CollectionReference brewCollection =
       FirebaseFirestore.instance.collection('posts');
-
   String userCollection = 'users';
-
   Map? currentuser;
-
   Future<model.User> getUserDetails() async {
     User currentUser = _auth.currentUser!;
     DocumentSnapshot documentSnapshot =
-        await _db.collection('users').doc(currentUser.uid).get();
+        await db.collection('users').doc(currentUser.uid).get();
     return model.User.fromSnap(documentSnapshot);
   }
 
@@ -70,11 +67,8 @@ class FirebaseService with ChangeNotifier {
           photoUrl: downloadUrl,
           uid: userCredential.user!.uid,
         );
-
-        await _db.collection('users').doc(userId).set(newuser.toJson());
-
+        await db.collection('users').doc(userId).set(newuser.toJson());
         notifyListeners();
-
         return true;
       });
     } catch (e) {
@@ -84,41 +78,57 @@ class FirebaseService with ChangeNotifier {
   }
 
   Future<Map> getUserData({required String uid}) async {
-    DocumentSnapshot _doc = await _db.collection(userCollection).doc(uid).get();
+    DocumentSnapshot _doc = await db.collection(userCollection).doc(uid).get();
     return _doc.data() as Map;
   }
 
-  void createPost(
-      {required String postText,
-      required String userName,
-      required String profilePic,
-      required String postFile,
-      required String postId}) async {
-    await _db.collection('posts').add({
-      'userId': _auth.currentUser!.uid,
-      'postText': postText,
-      'userName': userName,
-      'pofPic': profilePic,
-      'postFile': postFile,
-      'postId': postId,
-    });
+  Future<void> createPost3(
+      {map = Map<String, dynamic>, postId = String}) async {
+    final path = 'posts/$postId';
+    final docRef = db.doc(path);
+    await docRef.set(map);
   }
 
-  Stream<QuerySnapshot>? get posts {
-    return brewCollection.snapshots();
+  Future<List<Post>> postStream() async {
+    var ref = db.collection('posts');
+    var snapshot = await ref.get();
+    var snap = snapshot;
+    var posts = snap.docs.map((e) => Post.fromSnap(e));
+    return posts.toList();
   }
+
+  // Future<List<Post>> fillteredList(bool filter) async {
+  //   var ref = db.collection('posts');
+  //   var snapshot = await ref.get();
+  //   var data = snapshot.docs
+  //       .where((element) => element['check'] == filter)
+  //       .map((e) => e.data());
+  //   var posts = data.map((d) => Post.fromMap(d));
+  //   return posts.toList();
+  // }
 
   Stream<QuerySnapshot> getLatestPost() {
-    return _db.collection('posts').snapshots();
+    return db.collection('posts').snapshots();
   }
 
   Future<void> deletePost(String postId) async {
-    _db
+    db
         .collection('posts')
         .doc(postId)
         .delete()
         .then((value) => (print('deleted')))
-        .catchError((error) => print(error));
+        .catchError((error) => print("erro"));
+    notifyListeners();
+  }
+
+  updatePost(String postId) {
+    db.collection('posts').doc(postId).update({'postText': "trocou"});
+
+    notifyListeners();
+  }
+
+  comentar({postId: String, comentario: String}) {
+    db.collection('posts').doc(postId).set(postId);
 
     notifyListeners();
   }

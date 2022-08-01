@@ -4,7 +4,7 @@ import 'package:finstagram/Pages/newPost_page.dart';
 import 'package:finstagram/Pages/postDetail.dart';
 import 'package:finstagram/Pages/register_page.dart';
 import 'package:finstagram/Services/firebase_services.dart';
-import 'package:finstagram/Services/postNotifier.dart';
+
 import 'package:finstagram/models/post.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -22,9 +22,6 @@ void main() async {
         Provider<FirebaseService>(
           create: (context) => FirebaseService(),
         ),
-        Provider<PostNotifier>(
-          create: (context) => PostNotifier(),
-        )
       ],
       child: const MyApp(),
     ),

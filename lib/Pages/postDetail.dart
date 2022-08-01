@@ -14,12 +14,7 @@ class PostDetail extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(newPost.postText),
-            IconButton(
-                onPressed: () {
-                  FirebaseService().deletePost(newPost.postId);
-                  Navigator.of(context).pop();
-                },
-                icon: const Icon(Icons.delete))
+            IconButton(onPressed: () {}, icon: const Icon(Icons.delete))
           ],
         ),
       ),
